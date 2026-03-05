@@ -9,7 +9,7 @@ object LinkExtractor {
   def extract(markup: Markup): List[Hyperlink] =
     Jsoup
       .parse(markup.content)
-      .select("a[href]")
+      .select("a[href], area[href]")
       .asScala
       .map(el => Hyperlink(el.attr("href")))
       .toList
