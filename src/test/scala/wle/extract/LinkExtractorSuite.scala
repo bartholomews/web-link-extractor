@@ -1,7 +1,7 @@
 package wle.extract
 
-import wle.domain.{Hyperlink, Markup}
 import munit.CatsEffectSuite
+import wle.domain.{Hyperlink, Markup}
 
 class LinkExtractorSuite extends CatsEffectSuite {
 
@@ -13,7 +13,10 @@ class LinkExtractorSuite extends CatsEffectSuite {
         |</body></html>""".stripMargin
     )
     val result = LinkExtractor.extract(html)
-    assertEquals(result.map(_.href), List("https://example.com", "/relative/path"))
+    assertEquals(
+      result.map(_.href),
+      List("https://example.com", "/relative/path")
+    )
   }
 
   test("returns empty list for markup with no links") {
@@ -56,7 +59,10 @@ class LinkExtractorSuite extends CatsEffectSuite {
         |</body></html>""".stripMargin
     )
     val result = LinkExtractor.extract(html)
-    assertEquals(result.map(_.href), List("https://example.com/about", "/contact"))
+    assertEquals(
+      result.map(_.href),
+      List("https://example.com/about", "/contact")
+    )
   }
 
   test("extracts from both anchor and area tags") {
@@ -70,6 +76,12 @@ class LinkExtractorSuite extends CatsEffectSuite {
     )
     val result = LinkExtractor.extract(html)
     assertEquals(result.map(_.href), List("https://example.com", "/map-link"))
+  }
+
+  test("handles invalid html gracefully") {
+    val html = Markup("""Not an html""")
+    val result = LinkExtractor.extract(html)
+    assertEquals(result.map(_.href), List.empty)
   }
 
   test("handles malformed html gracefully") {
