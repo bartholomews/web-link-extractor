@@ -1,4 +1,4 @@
-package wle
+package wle.producer
 
 import cats.effect.Async
 import cats.syntax.all._

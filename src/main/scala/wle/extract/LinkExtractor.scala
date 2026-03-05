@@ -1,12 +1,12 @@
 package wle.extract
 
 import org.jsoup.Jsoup
-import wle.domain.{Hyperlink, Markup}
+import wle.domain.{Hyperlink, RawMarkup}
 
 import scala.jdk.CollectionConverters._
 
 object LinkExtractor {
-  def extract(markup: Markup): List[Hyperlink] =
+  def extract(markup: RawMarkup): List[Hyperlink] =
     Jsoup
       .parse(markup.content)
       .select("a[href], area[href]")
