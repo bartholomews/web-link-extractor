@@ -1,2 +1,3 @@
-@main def run(): Unit =
+object Main extends App {
   println("Hello")
+}

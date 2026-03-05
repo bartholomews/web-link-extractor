@@ -10,8 +10,10 @@ A Simple Producer/Consumer Web Link Extractor
 ## The Consumer
 
 - Reads the queue until it is empty and the producer is no longer extracting markup.
-- Parses the HTML and extracts all hyperlinks into a list. This list is output (file or command line) against each parsed URL.
-Requirements
+- Parses the HTML and extracts all hyperlinks into a list. This list is output (file or command line) against each
+  parsed URL.
+
+## Requirements
 
 - Producer and consumer must run concurrently.
 - Error handling should ensure isolation - one bad fetch or parse should not affect others.
