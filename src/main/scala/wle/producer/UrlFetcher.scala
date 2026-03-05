@@ -24,7 +24,7 @@ object UrlFetcher {
             .attemptT
             .flatMap[Throwable, RawMarkup](res =>
               res.body match {
-                case Right(value) => EitherT.rightT(RawMarkup(value))
+                case Right(str) => EitherT.rightT(RawMarkup(uri, str))
                 case Left(err) =>
                   EitherT.leftT(
                     new Exception(s"status: [${res.statusText}], error: [$err]")

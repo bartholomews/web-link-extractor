@@ -4,7 +4,7 @@ import fs2.io.file.Path
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import sttp.client4.httpclient.cats.HttpClientCatsBackend
-import wle.domain.{Hyperlink, RawMarkup}
+import wle.domain.RawMarkup
 import wle.extract.LinkExtractor
 import wle.producer.{Source, UrlFetcher}
 
@@ -30,14 +30,16 @@ object Main extends IOApp.Simple {
           .evalMap(rm => queue.offer(Some(rm)))
           .onFinalize(queue.offer(None))
 
-      val consumer: fs2.Stream[IO, Hyperlink] =
+      val consumer: fs2.Stream[IO, Unit] =
         fs2.Stream
           .fromQueueNoneTerminated(queue)
-          .map(LinkExtractor.extract)
-          .flatMap(fs2.Stream.emits)
-          .evalTap(href => logger.info(s"TODO: Process href: [$href]"))
+          .through(LinkExtractor.extract)
+          .evalMap({ case (uri, href) =>
+            // TODO[FB] Create a Sink interface with file (or console) impl
+            IO.println(s"${uri.toString()}") >> IO.println(href.mkString("\n"))
+          })
 
-      consumer.concurrently(producer).compile.drain
+      producer.merge(consumer).compile.drain
     })
   }
 }

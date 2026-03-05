@@ -1,3 +1,5 @@
 package wle.domain
 
-final case class RawMarkup(content: String) extends AnyVal
+import sttp.model.Uri
+
+final case class RawMarkup(uri: Uri, content: String)
