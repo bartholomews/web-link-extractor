@@ -9,13 +9,13 @@ import sttp.model.Uri
 import wle.domain.RawMarkup
 
 trait UrlFetcher[F[_]] {
-  def extractMarkup: fs2.Pipe[F, Uri, RawMarkup]
+  def fetch: fs2.Pipe[F, Uri, RawMarkup]
 }
 
 object UrlFetcher {
   def impl[F[_]: Async: Logger](backend: Backend[F]): UrlFetcher[F] =
     new UrlFetcher[F] {
-      override val extractMarkup: fs2.Pipe[F, Uri, RawMarkup] =
+      override val fetch: fs2.Pipe[F, Uri, RawMarkup] =
         _.evalMapFilter(uri => {
           basicRequest
             .get(uri)
