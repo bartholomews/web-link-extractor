@@ -13,13 +13,9 @@ trait Source[F[_]] {
 object Source {
   def fromPath[F[_]: Async: Files: Logger](path: Path): Source[F] =
     new Source[F] {
-      // Stream for the data in files in resources at startup
-      // TODO[FB] Could also have a Watcher for new files being pushed
-      //  while the producer is running
-      private val files = Files[F].list(path)
-
       override def urlStream: fs2.Stream[F, Uri] =
-        files
+        Files[F]
+          .list(path)
           .evalTap(file => Logger[F].debug(s"Processing file: [$file]"))
           .flatMap(file =>
             Files[F]
