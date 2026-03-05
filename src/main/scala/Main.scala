@@ -5,7 +5,7 @@ import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import sttp.client4.httpclient.cats.HttpClientCatsBackend
 import wle.domain.RawMarkup
-import wle.extract.LinkExtractor
+import wle.consumer.LinkExtractor
 import wle.producer.{Source, UrlFetcher}
 
 object Main extends IOApp.Simple {

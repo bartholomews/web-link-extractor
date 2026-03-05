@@ -1,4 +1,4 @@
-package wle.extract
+package wle.consumer
 
 import munit.CatsEffectSuite
 import sttp.client4.UriContext

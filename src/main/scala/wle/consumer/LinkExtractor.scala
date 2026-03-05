@@ -1,4 +1,4 @@
-package wle.extract
+package wle.consumer
 
 import org.jsoup.Jsoup
 import sttp.model.Uri
