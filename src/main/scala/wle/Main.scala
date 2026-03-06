@@ -20,11 +20,7 @@ object Main extends IOApp.Simple {
   override def run: IO[Unit] = {
     (for {
       backend <- HttpClientCatsBackend.resource[IO]()
-      queue <- Resource.eval(
-        // TODO[FB] Not convinced on dropping urls silently here,
-        //  possibly a better idea is to have a bounded queue with backpressure
-        Queue.circularBuffer[IO, Option[RawMarkup]](queueCapacity)
-      )
+      queue <- Resource.eval(Queue.bounded[IO, Option[RawMarkup]](queueCapacity))
     } yield (backend, queue)).use({ case (backend, queue) =>
       val urlFetcher = UrlFetcher.impl[IO](backend)
       // val consumerSink = Sink.toConsole[IO]

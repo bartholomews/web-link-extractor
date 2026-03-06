@@ -17,3 +17,17 @@ Only the HTTP status code (2xx) is validated, otherwise we parse the response bo
 This is to cleanly separate the boundaries between producer (network I/O bounded) and consumer (HTML parsing, CPU
 bound). It could check `Content-Type` (e.g. `text/html`) but we could assume header might be missing, charsets params,
 etc. would overcomplicate.
+
+## Queue strategy ("Trimming oldest queue entries if queue size balloons")
+
+This relates to "Trimming oldest queue entries if queue size balloons": the current approach is to use a bounded queue
+with backpressure (the capacity is set to an arbitrary default — in practice it would depend on expected throughput,
+memory constraints, etc.).
+
+The assumption is that URL extraction doesn't have an intrinsic priority: every requested URL should be processed,
+so data loss is not acceptable.
+
+In a different use case (e.g. real-time data / live feeds - where freshness matters more than completeness),
+trimming via a circular buffer could be an alternative. However, I think even then the domain model
+would need to carry identifiers / timestamps to discard data safely, rather than relying on
+positional eviction of the oldest queue entries.
