@@ -64,7 +64,7 @@ Output data is currently written into a single `out` file which gets overridden 
 If historical results were needed, the output path could incorporate a timestamp or run ID, or results could be appended
 rather than overwritten.
 
-## Possible follow-up work
+# Possible follow-up work
 
 - **Caching**: skip URLs already fetched to avoid redundant network requests across input files.
 - **Integration tests with wiremock**: test the full pipeline (Source → UrlFetcher → Queue → LinkExtractor → Sink)
