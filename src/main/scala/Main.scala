@@ -4,12 +4,15 @@ import fs2.io.file.Path
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import sttp.client4.httpclient.cats.HttpClientCatsBackend
+import wle.consumer.{LinkExtractor, Sink}
 import wle.domain.RawMarkup
-import wle.consumer.LinkExtractor
 import wle.producer.{Source, UrlFetcher}
 
 object Main extends IOApp.Simple {
   implicit val logger: Logger[IO] = Slf4jLogger.getLogger[IO]
+
+  private val sourcePath = Path("src/main/resources/in")
+  private val sinkPath = Path("src/main/resources/out")
   private val queueCapacity: Int = 10
 
   override def run: IO[Unit] = {
@@ -22,9 +25,10 @@ object Main extends IOApp.Simple {
       )
     } yield (backend, queue)).use({ case (backend, queue) =>
       val urlFetcher = UrlFetcher.impl[IO](backend)
+      val consumerSink = Sink.toConsole[IO] // Sink.toPath[IO](sinkPath)
       val producer: fs2.Stream[IO, Unit] =
         Source
-          .fromPath[IO](Path("src/main/resources"))
+          .fromPath[IO](sourcePath)
           .urlStream
           .through(urlFetcher.fetch)
           .evalMap(rm => queue.offer(Some(rm)))
@@ -34,10 +38,7 @@ object Main extends IOApp.Simple {
         fs2.Stream
           .fromQueueNoneTerminated(queue)
           .through(LinkExtractor.extract)
-          .evalMap({ case (uri, href) =>
-            // TODO[FB] Create a Sink interface with file (or console) impl
-            IO.println(s"${uri.toString()}") >> IO.println(href.mkString("\n"))
-          })
+          .through(consumerSink.write)
 
       producer.merge(consumer).compile.drain
     })
