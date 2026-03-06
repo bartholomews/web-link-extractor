@@ -71,3 +71,6 @@ rather than overwritten.
   with stubbed HTTP responses for realistic end-to-end coverage.
 - **UrlFetcher unit tests**: use sttp's `BackendStub` to test HTTP error handling (non-2xx, timeouts, connection errors)
   without hitting the network.
+- **Performance testing**: generate a large input set with a slow/throttled mock server
+  (e.g. wiremock with fixed delays) to observe backpressure behaviour under load — verify the bounded queue blocks the
+  producer rather than growing memory unboundedly.
