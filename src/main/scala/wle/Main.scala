@@ -16,6 +16,7 @@ object Main extends IOApp.Simple {
   private val sourcePath = Path("src/main/resources/in")
   private val sinkPath = Path("src/main/resources/out")
   private val queueCapacity: Int = 10
+  private val urlFetchConcurrency: Int = 10
 
   override def run: IO[Unit] = {
     (for {
@@ -29,7 +30,8 @@ object Main extends IOApp.Simple {
         Source
           .fromPath[IO](sourcePath)
           .urlStream
-          .through(urlFetcher.fetch)
+          .parEvalMapUnordered(urlFetchConcurrency)(urlFetcher.fetch)
+          .unNone
           .evalMap(rm => queue.offer(Some(rm)))
           .onFinalize(queue.offer(None))
 
