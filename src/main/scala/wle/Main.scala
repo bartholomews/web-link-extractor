@@ -1,3 +1,5 @@
+package wle
+
 import cats.effect.std.Queue
 import cats.effect.{IO, IOApp, Resource}
 import fs2.io.file.Path
