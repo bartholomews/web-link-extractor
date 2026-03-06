@@ -50,10 +50,14 @@ The following are product-level decisions that would depend on the use case:
 - **Absolute URL normalisation**: URLs like `https://example.com/` and `https://example.com` are treated as
   distinct values. Normalisation could be added if semantic equality matters.
 
+Output data is currently written into a single `out` file which gets overridden after each run.
+If historical results were needed, the output path could incorporate a timestamp or run ID, or results could be appended
+rather than overwritten.
+
 ## Possible follow-up work
 
+- **Deduplicate URLs**: cache already-fetched URLs to avoid re-processing duplicates across files.
 - **Integration tests with wiremock**: test the full pipeline (Source → UrlFetcher → Queue → LinkExtractor → Sink)
   with stubbed HTTP responses for realistic end-to-end coverage.
 - **UrlFetcher unit tests**: use sttp's `BackendStub` to test HTTP error handling (non-2xx, timeouts, connection errors)
   without hitting the network.
-- **Deduplicate URLs**: cache already-fetched URLs to avoid re-processing duplicates across files.
