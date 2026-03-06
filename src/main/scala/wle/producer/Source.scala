@@ -22,7 +22,6 @@ object Source {
               .readUtf8Lines(file)
               .map(_.trim)
               .filter(_.nonEmpty)
-              .evalTap(str => Logger[F].debug(str))
               .map(Uri.parse)
               .evalMap {
                 case Left(err) =>

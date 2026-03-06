@@ -31,7 +31,7 @@ object Main extends IOApp.Simple {
           .urlStream
           .parEvalMapUnordered(urlFetchConcurrency)(urlFetcher.fetch)
           .unNone
-          .evalMap(rm => queue.offer(Some(rm)))
+          .evalMap(urlMarkup => queue.offer(Some(urlMarkup)))
           .onFinalize(queue.offer(None))
 
       val consumer: fs2.Stream[IO, Unit] =

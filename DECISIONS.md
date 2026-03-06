@@ -1,3 +1,13 @@
+# How to run
+
+Place one or more files containing URLs (one per line) in `src/main/resources/in/`, then:
+
+```
+sbt run
+```
+
+Output is written to `src/main/resources/out`. Tests can be run with `sbt test`.
+
 # Assumptions
 
 ## Program lifecycle
