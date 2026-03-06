@@ -32,6 +32,24 @@ trimming via a circular buffer could be an alternative. However, I think even th
 would need to carry identifiers / timestamps to discard data safely, rather than relying on
 positional eviction of the oldest queue entries.
 
+## Product considerations
+
+Hyperlinks are extracted as raw `href` values without transformation, preserving the original data.
+The following are product-level decisions that would depend on the use case:
+
+- **Relative URLs** (e.g. `/about`, `../page`): not resolved against the source page URL.
+  Could be resolved using the source URI in `ExtractionResult` if absolute URLs are needed.
+- **Fragment-only links** (e.g. `#section`): included as-is. These refer to anchors within the same page,
+  not separate pages — filtering them out may or may not be desired.
+- **Non-HTTP schemes** (e.g. `mailto:`, `tel:` etc.): included as-is (actually noticed what it seems
+  Cloudflare obfuscated value for my website email)
+- These are valid `href` values but not web page links — filtering would require a product decision on what counts as
+  a "hyperlink" for the specific use case.
+- **Duplicate links**: a page may contain the same link multiple times. Currently all occurrences are included;
+  deduplication per page could be added if only unique links are needed.
+- **Absolute URL normalisation**: URLs like `https://example.com/` and `https://example.com` are treated as
+  distinct values. Normalisation could be added if semantic equality matters.
+
 ## Possible follow-up work
 
 - **File-level error isolation**: an unreadable file currently kills the whole Source stream.
