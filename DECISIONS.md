@@ -31,3 +31,13 @@ In a different use case (e.g. real-time data / live feeds - where freshness matt
 trimming via a circular buffer could be an alternative. However, I think even then the domain model
 would need to carry identifiers / timestamps to discard data safely, rather than relying on
 positional eviction of the oldest queue entries.
+
+## Possible follow-up work
+
+- **File-level error isolation**: an unreadable file currently kills the whole Source stream.
+  Add per-file `.handleErrorWith` to log and skip bad files without affecting others.
+- **Integration tests with wiremock**: test the full pipeline (Source → UrlFetcher → Queue → LinkExtractor → Sink)
+  with stubbed HTTP responses for realistic end-to-end coverage.
+- **UrlFetcher unit tests**: use sttp's `BackendStub` to test HTTP error handling (non-2xx, timeouts, connection errors)
+  without hitting the network.
+- **Deduplicate URLs**: cache already-fetched URLs to avoid re-processing duplicates across files.

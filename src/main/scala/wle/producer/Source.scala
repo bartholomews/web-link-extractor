@@ -20,6 +20,7 @@ object Source {
           .flatMap(file =>
             Files[F]
               .readUtf8Lines(file)
+              .map(_.trim)
               .filter(_.nonEmpty)
               .evalTap(str => Logger[F].debug(str))
               .map(Uri.parse)
