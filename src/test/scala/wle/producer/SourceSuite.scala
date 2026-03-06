@@ -74,13 +74,14 @@ class SourceSuite extends CatsEffectSuite {
     }
   }
 
-  test("unreadable file kills the stream (known limitation)".fail) {
+  test("unreadable file is skipped without killing the stream") {
     Files[IO].tempDirectory.use { dir =>
-      writeFile(dir / "good.txt", List("https://example.com")) >>
-        writeFile(dir / "bad.txt", List("https://other.com")) >>
-        IO.blocking(( dir / "bad.txt").toNioPath.toFile.setReadable(false)) >>
+      // Name files so bad sorts before good, ensuring stream continues after error
+      writeFile(dir / "a_bad.txt", List("https://other.com")) >>
+        writeFile(dir / "b_good.txt", List("https://example.com")) >>
+        IO.blocking((dir / "a_bad.txt").toNioPath.toFile.setReadable(false)) >>
         Source.fromPath[IO](dir).urlStream.compile.toList.map { urls =>
-          assert(urls.nonEmpty, "Should still emit URLs from readable files")
+          assertEquals(urls.map(_.toString), List("https://example.com"))
         }
     }
   }

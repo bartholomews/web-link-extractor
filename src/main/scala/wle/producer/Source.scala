@@ -34,7 +34,11 @@ object Source {
                 case Right(uri) => uri.some.pure[F]
               }
               .unNone
+              .handleErrorWith(err =>
+                fs2.Stream.exec(
+                  Logger[F].error(err)(s"Failed to read file [$file], skipping")
+                )
+              )
           )
-      // TODO[FB] Currently handling files content errors, but for an unreadable file, the whole stream will fail
     }
 }

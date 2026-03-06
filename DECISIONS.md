@@ -52,8 +52,6 @@ The following are product-level decisions that would depend on the use case:
 
 ## Possible follow-up work
 
-- **File-level error isolation**: an unreadable file currently kills the whole Source stream.
-  Add per-file `.handleErrorWith` to log and skip bad files without affecting others.
 - **Integration tests with wiremock**: test the full pipeline (Source → UrlFetcher → Queue → LinkExtractor → Sink)
   with stubbed HTTP responses for realistic end-to-end coverage.
 - **UrlFetcher unit tests**: use sttp's `BackendStub` to test HTTP error handling (non-2xx, timeouts, connection errors)
