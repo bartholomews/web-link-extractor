@@ -25,7 +25,8 @@ object Main extends IOApp.Simple {
       )
     } yield (backend, queue)).use({ case (backend, queue) =>
       val urlFetcher = UrlFetcher.impl[IO](backend)
-      val consumerSink = Sink.toConsole[IO] // Sink.toPath[IO](sinkPath)
+      // val consumerSink = Sink.toConsole[IO]
+      val consumerSink = Sink.toPath[IO](sinkPath)
       val producer: fs2.Stream[IO, Unit] =
         Source
           .fromPath[IO](sourcePath)
