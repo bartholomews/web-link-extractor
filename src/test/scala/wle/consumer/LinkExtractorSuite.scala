@@ -2,7 +2,7 @@ package wle.consumer
 
 import munit.CatsEffectSuite
 import sttp.client4.UriContext
-import wle.domain.{Hyperlink, RawMarkup}
+import wle.domain.{ExtractionResult, Hyperlink, RawMarkup}
 
 class LinkExtractorSuite extends CatsEffectSuite {
 
@@ -16,7 +16,10 @@ class LinkExtractorSuite extends CatsEffectSuite {
       .emit(RawMarkup(testUri, html))
       .through(LinkExtractor.extract)
       .toList
-    assertEquals(actual, List((testUri, expectedHrefs.map(Hyperlink.apply))))
+    assertEquals(
+      actual,
+      List(ExtractionResult(testUri, expectedHrefs.map(Hyperlink.apply)))
+    )
   }
 
   test("extracts href from anchor tags") {

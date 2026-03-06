@@ -1,15 +1,14 @@
 package wle.consumer
 
 import org.jsoup.Jsoup
-import sttp.model.Uri
-import wle.domain.{Hyperlink, RawMarkup}
+import wle.domain.{ExtractionResult, Hyperlink, RawMarkup}
 
 import scala.jdk.CollectionConverters._
 
 object LinkExtractor {
-  def extract[F[_]]: fs2.Pipe[F, RawMarkup, (Uri, List[Hyperlink])] =
-    _.map(markup => {
-      (
+  def extract[F[_]]: fs2.Pipe[F, RawMarkup, ExtractionResult] =
+    _.map(markup =>
+      ExtractionResult(
         markup.uri,
         Jsoup
           .parse(markup.content)
@@ -18,5 +17,5 @@ object LinkExtractor {
           .map(el => Hyperlink(el.attr("href")))
           .toList
       )
-    })
+    )
 }
