@@ -56,7 +56,7 @@ rather than overwritten.
 
 ## Possible follow-up work
 
-- **Deduplicate URLs**: cache already-fetched URLs to avoid re-processing duplicates across files.
+- **Caching**: skip URLs already fetched to avoid redundant network requests across input files.
 - **Integration tests with wiremock**: test the full pipeline (Source → UrlFetcher → Queue → LinkExtractor → Sink)
   with stubbed HTTP responses for realistic end-to-end coverage.
 - **UrlFetcher unit tests**: use sttp's `BackendStub` to test HTTP error handling (non-2xx, timeouts, connection errors)
